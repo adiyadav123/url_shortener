@@ -27,10 +27,6 @@ function writeUrlData(url, uid,) {
   })
 }
 
-function getUrlData(uid) {
-  
-}
-
 async function updateClicks(uid, clicks) {
 
   const dbRef = ref(getDatabase());
@@ -53,4 +49,4 @@ async function updateClicks(uid, clicks) {
 
 
 
-export { app, writeUrlData, getUrlData, updateClicks };
+export { app, writeUrlData, updateClicks };

@@ -39,16 +39,16 @@ export default function Home() {
 
   return (
     <section className=" flex items-center justify-center h-screen w-screen flex-col">
-      <h1 className=" lg:text-[30px] md:text-[20px]">Url Shortener</h1>
+      <h1 className=" lg:text-[30px] md:text-[20px] text-[#9572b3]">Url Shortener</h1>
       <div className="h-[10px]"></div>
-      <div className=" flex items-center justify-center">
-        <Input placeholder="Enter URL" onChange={updateInput} />
-        <Button className=" ml-2" onClick={shortURL}>Shorten URL</Button>
+      <div className=" flex items-center justify-center w-full h-[60vh]">
+        <Input className="w-[70%] h-[12%] border-4 hover:border-[#D0A2F7] rounded-3xl p-5 transition-all duration-500 text-[#9572b3]" placeholder="Enter URL" onChange={updateInput} />
+        <Button className=" ml-2 h-[12%] rounded-3xl bg-[#F1EAFF] hover:bg-[#D0A2F7]   transition-all duration-1000  text-black" onClick={shortURL}>Shorten URL</Button>
 
       </div>
 
-      <p>Shortened Url: {ShortenUrl}</p>
-      <p>Old Url: {OldUrl}</p>
+      <p>{ShortenUrl}</p>
+      <p>{OldUrl}</p>
 
     </section>
   )
