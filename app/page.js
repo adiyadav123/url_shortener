@@ -46,7 +46,7 @@ export default function Home() {
 
   return (
     <section className=" flex items-center justify-center h-screen w-screen flex-col">
-      <h1 className=" lg:text-[30px] md:text-[20px] text-[#9572b3]">
+      <h1 className=" lg:text-[30px] md:text-[30px] text-black mt-10 font-bold ">
         Url Shortener
       </h1>
       <div className="h-[10px]"></div>
