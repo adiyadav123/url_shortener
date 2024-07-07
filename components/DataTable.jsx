@@ -39,6 +39,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { FollowPointer, FollowerPointerCard } from "./ui/following-pointer";
+import { LinkPreview } from "./ui/link-preview";
 
 // var data = [
 //   {
@@ -92,7 +94,47 @@ export const columns = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("uid")}</div>,
+    cell: ({ row }) => (
+      <div className="lowercase">
+        <a
+          href={`${process.env.NEXT_PUBLIC_URL}/u/${row.getValue("uid")}`}
+          target="_blank"
+        >
+          {row.getValue("uid")}
+        </a>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "shortUrl",
+    header: "Short Url",
+    cell: ({ row }) => (
+      <div className="lowercase">
+        <a
+          href={row.getValue("shortUrl")}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <LinkPreview url="https://github.com/adiyadav123" className="font-bold" >
+            {row.getValue("shortUrl")}
+          </LinkPreview>
+        </a>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => {
+      // Convert the Unix timestamp to a Date object
+      const date = new Date(row.getValue("createdAt"));
+
+      // Format the date and time
+      const dateString = date.toLocaleDateString();
+      const timeString = date.toLocaleTimeString();
+
+      return <div className="lowercase">{`${dateString} ${timeString}`}</div>;
+    },
   },
   {
     accessorKey: "clicks",
@@ -129,7 +171,15 @@ export const columns = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View Analytics</DropdownMenuItem>
-            <DropdownMenuItem>Visit</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${process.env.NEXT_PUBLIC_URL}/${payment.id}`
+                );
+              }}
+            >
+              Visit
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -142,21 +192,16 @@ export function DataTableDemo() {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [data, setData] = React.useState([
-    {
-      id: "m5gr84i9",
-      clicks: 316,
-      status: "active",
-      uid: "m5gr84i9",
-    },
-  ]);
+  const [data, setData] = React.useState([]);
 
   React.useEffect(() => {
     const getShortenedUrls = async () => {
       const shortenedUrl = localStorage.getItem("shortenedUrls");
 
-      if (shortenedUrl.length < 0) {
-        return;
+      if (shortenedUrl) {
+        if (shortenedUrl.length < 0) {
+          return;
+        }
       }
 
       const parsedData = JSON.parse(shortenedUrl);
@@ -165,7 +210,7 @@ export function DataTableDemo() {
           const response = await fetch(`/api/redirect/`, {
             method: "POST",
             "Content-Type": "application/json",
-            body: JSON.stringify({ uid: item.uid }),
+            body: JSON.stringify({ uid: item.uid, clicks: 0 }),
           });
           const redirect_data = await response.json();
 
@@ -174,7 +219,7 @@ export function DataTableDemo() {
             shortUrl: item.shortUrl,
             clicks: redirect_data.clicks,
             createdAt: redirect_data.createdAt,
-            status: "Active"
+            status: "Active",
           };
         })
       );
@@ -218,116 +263,116 @@ export function DataTableDemo() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter uids..."
-          value={table.getColumn("uid")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("uid")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Filter uids..."
+            value={table.getColumn("uid")?.getFilterValue() ?? ""}
+            onChange={(event) =>
+              table.getColumn("uid")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
                   );
                 })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
-      </div>
     </div>
   );
 }

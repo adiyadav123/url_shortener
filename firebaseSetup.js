@@ -35,7 +35,6 @@ async function updateClicks(uid, clicks) {
   await get(child(dbRef, `urls/${uid}`)).then((snapshot) => {
     if (snapshot.exists()) {
       dt.push(snapshot.val());
-      console.log(snapshot.val());
       return dt;
     } else {
       console.log("No data available");

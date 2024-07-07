@@ -1,6 +1,7 @@
 "use client";
 
 import { DataTableDemo } from "@/components/DataTable";
+import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -44,8 +45,6 @@ export default function Home() {
     setShortenUrl(url);
     setOldUrl(oldUrl);
 
-    console.log(data)
-
     const dta = {
       uid: Inputt,
       shortUrl: url,
@@ -59,31 +58,40 @@ export default function Home() {
   };
 
   return (
-    <section className=" flex items-center justify-center h-screen w-screen flex-col">
-      <h1 className=" lg:text-[30px] md:text-[30px] text-black mt-10 font-bold ">
+    <section className=" flex items-center justify-center min-h-screen max-w-screen flex-col bg-neutral-950 relative antialiased z-10">
+      <h1 className="relative lg:text-[30px] md:text-[30px] mt-10 font-bold ">
         Url Shortener
       </h1>
-      <div className="h-[10px]"></div>
-      <div className=" flex items-center justify-center w-full h-[60vh] p-5">
+      <div className=" relative h-[10px]"></div>
+      <div className=" flex items-center justify-center w-full h-[60vh] p-5 relative">
         <Input
-          className="w-[70%] h-[12%] border-4 hover:border-[#D0A2F7] rounded-3xl p-5 transition-all duration-500 text-[#9572b3]"
+          className="w-[70%] h-[12%] border-4 hover:border-[#D0A2F7] rounded-3xl p-5 transition-all duration-500 text-[#9572b3] z-10"
           placeholder="Enter URL"
           onChange={updateInput}
         />
         <Button
-          className=" ml-2 h-[12%] border-4 hover:border-[#DOA2F7] p-4 rounded-3xl bg-[#F1EAFF] hover:bg-[#D0A2F7]   transition-all duration-500  text-black"
+          className=" ml-2 h-[12%] border-4 hover:border-[#D0A2F7] p-5 rounded-3xl bg-[#F1EAFF] hover:bg-[#000000] hover:text-white   transition-all duration-500  text-black relative z-10"
           onClick={shortURL}
         >
           Shorten URL
         </Button>
       </div>
 
-      <p>{ShortenUrl}</p>
-      <p>{OldUrl}</p>
+     <div className="z-10 text-center">
+        <h1 className="text-[20px] font-bold text-center">Shortened URL</h1>
+        <div className="h-[10px]"></div>
+        <div className="text-[#9572b3]">{ShortenUrl}</div>
+        <div className="h-[10px]"></div>
+        <div className="text-[#9572b3]">{OldUrl}</div>
+     </div>
 
-      <div className=" w-[80%]">
+
+
+      <div className=" w-[80%] z-10">
         <DataTableDemo  />
       </div>
+
+      <BackgroundBeams />
     </section>
   );
 }

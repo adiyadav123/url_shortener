@@ -16,7 +16,7 @@ export async function POST(request) {
 
     const uid = crypto.randomBytes(3).toString('hex');
     
-    const baseURL = "http://localhost:3000/u";
+    const baseURL = `${process.env.NEXT_PUBLIC_URL}/u`;
 
     writeUrlData(url, uid);
 

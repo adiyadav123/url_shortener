@@ -19,7 +19,7 @@ const Page = ({ params }) => {
     const response = await fetch(`/api/redirect/`, {
       method: "POST",
       "Content-Type": "application/json",
-      body: JSON.stringify({ uid: uid })
+      body: JSON.stringify({ uid: uid, clicks: 1 })
     });
     const data = await response.json();
 
@@ -31,7 +31,9 @@ const Page = ({ params }) => {
     setClicks(data.clicks);
     setTimeCreated(data.createdAt);
 
-    setSec(0);
+    setTimeout(() => {
+      setSec(0);
+    }, 5000);
 
   }
 

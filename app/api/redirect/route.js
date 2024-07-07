@@ -9,8 +9,13 @@ export async function POST(request) {
   }
 
   const uid = uidObj.uid;
+  const cl = uidObj.clicks;
+  
+  
 
-  updateClicks(uid, 1);
+  updateClicks(uid, cl);
+
+  
 
   const dbRef = ref(getDatabase());
   var dt = [];
