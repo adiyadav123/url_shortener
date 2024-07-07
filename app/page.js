@@ -29,7 +29,7 @@ export default function Home() {
           createdAt: 1720355260257,
           uid: "acde1c",
           url: "https://youtube.com/shorts/xD664dQWpDk?si=lP4Wr8SJ1GoVLZuZ",
-          shortUrl: "https://youtube.com/shorts/xD664dQWpDk?si=lP4Wr8SJ1GoVLZuZ",
+          shortUrl: "https://ushort-gray.vercel.app/u/acde1c",
         },
       ];
       localStorage.setItem("shortenedUrls", JSON.stringify(dummyArray));
