@@ -14,17 +14,18 @@ export default function Home() {
   const [ShortenUrl, setShortenUrl] = useState("");
   const [OldUrl, setOldUrl] = useState("");
   const [Uid, setUid] = useState("");
+  const [IsChecked, setIsChecked] = useState(false);
 
   const updateInput = (e) => {
     setInput(e.target.value);
   };
 
   useEffect(() => {
-    if(!localStorage.getItem('shortenedUrls')){
+    if (!localStorage.getItem("shortenedUrls")) {
       const dummyArray = [];
-      localStorage.setItem('shortenedUrls', JSON.stringify(dummyArray));
+      localStorage.setItem("shortenedUrls", JSON.stringify(dummyArray));
     }
-  }, [])
+  }, []);
 
   const shortURL = async () => {
     if (!Inputt.length) {
@@ -52,10 +53,12 @@ export default function Home() {
       uid: u,
     };
 
-    const shortenedUrlsArray = localStorage.getItem('shortenedUrls');
+    setIsChecked(true);
+
+    const shortenedUrlsArray = localStorage.getItem("shortenedUrls");
     const shortenedUrls = JSON.parse(shortenedUrlsArray);
     shortenedUrls.push(dta);
-    localStorage.setItem('shortenedUrls', JSON.stringify(shortenedUrls));
+    localStorage.setItem("shortenedUrls", JSON.stringify(shortenedUrls));
   };
 
   return (
@@ -78,26 +81,28 @@ export default function Home() {
         </Button>
       </div>
 
-     <div className="z-10 text-center">
+      <div className="z-10 text-center">
         <h1 className="text-[20px] font-bold text-center">Shortened URL</h1>
         <div className="h-[10px]"></div>
         <div className="text-[#9572b3]">
-          <LinkPreview url={ShortenUrl} >
-            {ShortenUrl}
-          </LinkPreview>
+          {IsChecked ? (
+            <LinkPreview url={ShortenUrl}>{ShortenUrl}</LinkPreview>
+          ) : (
+            ShortenUrl
+          )}
         </div>
         <div className="h-[10px]"></div>
         <div className="text-[#9572b3]">
-          <LinkPreview url={OldUrl}>
-            {OldUrl}
-          </LinkPreview>
+        {IsChecked ? (
+            <LinkPreview url={OldUrl}>{OldUrl}</LinkPreview>
+          ) : (
+            OldUrl
+          )}
         </div>
-     </div>
-
-
+      </div>
 
       <div className=" w-[80%] z-10">
-        <DataTableDemo  />
+        <DataTableDemo />
       </div>
 
       <BackgroundBeams />
