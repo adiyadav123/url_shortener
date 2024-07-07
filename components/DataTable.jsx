@@ -202,6 +202,10 @@ export function DataTableDemo() {
         if (shortenedUrl.length < 0) {
           return;
         }
+      } 
+
+      if (!shortenedUrl) {
+        return;
       }
 
       const parsedData = JSON.parse(shortenedUrl);
