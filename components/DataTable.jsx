@@ -45,32 +45,8 @@ const data = [
     id: "m5gr84i9",
     clicks: 316,
     status: "active",
-    uid: "Url 1",
-  },
-  {
-    id: "3u1reuv4",
-    clicks: 242,
-    status: "active",
-    uid: "Url 2",
-  },
-  {
-    id: "derv1ws0",
-    clicks: 837,
-    status: "active",
-    uid: "Url 3",
-  },
-  {
-    id: "5kma53ae",
-    clicks: 874,
-    status: "active",
-    uid: "Url 4",
-  },
-  {
-    id: "bhqecj4p",
-    clicks: 12,
-    status: "stopped",
-    uid: "Url 5",
-  },
+    uid: "m5gr84i9",
+  }
 ]
 
 export const columns = [
@@ -149,11 +125,11 @@ export const columns = [
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(payment.id)}
             >
-              Copy payment ID
+              Copy UID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>View Analytics</DropdownMenuItem>
+            <DropdownMenuItem>Visit</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

@@ -34,6 +34,14 @@ export default function Home() {
     const oldUrl = data.url;
     setShortenUrl(url);
     setOldUrl(oldUrl);
+
+
+    const analytics = async() => {
+      const data = {
+        uid: Inputt
+      }
+    }
+
   };
 
   return (
@@ -49,7 +57,7 @@ export default function Home() {
           onChange={updateInput}
         />
         <Button
-          className=" ml-2 h-[20%] rounded-3xl bg-[#F1EAFF] hover:bg-[#D0A2F7]   transition-all duration-1000  text-black"
+          className=" ml-2 h-[12%] border-4 hover:border-[#DOA2F7] p-4 rounded-3xl bg-[#F1EAFF] hover:bg-[#D0A2F7]   transition-all duration-500  text-black"
           onClick={shortURL}
         >
           Shorten URL
