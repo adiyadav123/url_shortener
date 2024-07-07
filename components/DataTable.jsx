@@ -207,7 +207,7 @@ export function DataTableDemo() {
       const parsedData = JSON.parse(shortenedUrl);
       const result = await Promise.all(
         parsedData.map(async (item) => {
-          const response = await fetch(`/api/redirect/`, {
+          const response = await fetch(`/api/redirect`, {
             method: "POST",
             "Content-Type": "application/json",
             body: JSON.stringify({ uid: item.uid, clicks: 0 }),
