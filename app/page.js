@@ -4,6 +4,7 @@ import { DataTableDemo } from "@/components/DataTable";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LinkPreview } from "@/components/ui/link-preview";
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -90,7 +91,7 @@ export default function Home() {
         <div className="h-[10px]"></div>
         <div className="text-[#9572b3]">{ShortenUrl}</div>
         <div className="h-[10px]"></div>
-        <div className="text-[#9572b3]">{ShortenUrl}</div>
+        <div className="text-[#9572b3]">{OldUrl}</div>
       </div>
 
       <div className=" w-[80%] z-10">
@@ -100,9 +101,9 @@ export default function Home() {
       <footer className="w-full h-[8vh] flex items-center justify-center fixed left-0 bottom-0 bg-[#34333534] z-30 backdrop-blur-3xl">
         <h1>
           Made with ❤️ by{" "}
-          <Link href="https://github.com/adiyadav123" target="_blank">
-            Aditya Yadav
-          </Link>
+          <LinkPreview url='https://github.com/adiyadav123'>
+            Aditya
+          </LinkPreview>
         </h1>
       </footer>
 
