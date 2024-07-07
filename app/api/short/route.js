@@ -20,5 +20,5 @@ export async function POST(request) {
 
     writeUrlData(url, uid);
 
-    return NextResponse.json({ url: url, shortenedUrl: `${baseURL}/${uid}` });
+    return NextResponse.json({ url: url, shortenedUrl: `${baseURL}/${uid}`, uid: uid });
 }

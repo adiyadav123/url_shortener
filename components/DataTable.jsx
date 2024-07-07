@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   CaretSortIcon,
   ChevronDownIcon,
   DotsHorizontalIcon,
-} from "@radix-ui/react-icons"
+} from "@radix-ui/react-icons";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -17,10 +17,10 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -29,8 +29,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -38,16 +38,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
-const data = [
-  {
-    id: "m5gr84i9",
-    clicks: 316,
-    status: "active",
-    uid: "m5gr84i9",
-  }
-]
+// var data = [
+//   {
+//     id: "m5gr84i9",
+//     clicks: 316,
+//     status: "active",
+//     uid: "m5gr84i9",
+//   },
+// ];
 
 export const columns = [
   {
@@ -90,7 +90,7 @@ export const columns = [
           UID
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
     cell: ({ row }) => <div className="lowercase">{row.getValue("uid")}</div>,
   },
@@ -98,19 +98,19 @@ export const columns = [
     accessorKey: "clicks",
     header: () => <div className="text-right">Clicks</div>,
     cell: ({ row }) => {
-      const clicks = parseFloat(row.getValue("clicks"))
+      const clicks = parseFloat(row.getValue("clicks"));
 
       // Format the clicks as a dollar clicks
       const formatted = clicks;
 
-      return <div className="text-right font-medium">{formatted}</div>
+      return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const payment = row.original;
 
       return (
         <DropdownMenu>
@@ -132,19 +132,70 @@ export const columns = [
             <DropdownMenuItem>Visit</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
 export function DataTableDemo() {
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = React.useState([]);
+  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [columnVisibility, setColumnVisibility] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [data, setData] = React.useState([
+    {
+      id: "m5gr84i9",
+      clicks: 316,
+      status: "active",
+      uid: "m5gr84i9",
+    },
+  ]);
+
+  React.useEffect(() => {
+    const getShortenedUrls = async () => {
+      const shortenedUrl = localStorage.getItem("shortenedUrls");
+
+      if (shortenedUrl.length < 0) {
+        return;
+      }
+
+      const parsedData = JSON.parse(shortenedUrl);
+      const result = await Promise.all(
+        parsedData.map(async (item) => {
+          const response = await fetch(`/api/redirect/`, {
+            method: "POST",
+            "Content-Type": "application/json",
+            body: JSON.stringify({ uid: item.uid }),
+          });
+          const redirect_data = await response.json();
+
+          return {
+            uid: item.uid,
+            shortUrl: item.shortUrl,
+            clicks: redirect_data.clicks,
+            createdAt: redirect_data.createdAt,
+            status: "Active"
+          };
+        })
+      );
+
+      result.map((item) => {
+        data.push(item);
+      });
+
+      const uniqueData = data.filter(
+        (item, index, self) =>
+          index ===
+          self.findIndex(
+            (t) => t.uid === item.uid && t.shortUrl === item.shortUrl
+          )
+      );
+
+      setData(uniqueData);
+    };
+
+    getShortenedUrls();
+  }, []);
 
   const table = useReactTable({
     data,
@@ -163,14 +214,14 @@ export function DataTableDemo() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter uids..."
-          value={(table.getColumn("uid")?.getFilterValue()) ?? ""}
+          value={table.getColumn("uid")?.getFilterValue() ?? ""}
           onChange={(event) =>
             table.getColumn("uid")?.setFilterValue(event.target.value)
           }
@@ -198,7 +249,7 @@ export function DataTableDemo() {
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -218,7 +269,7 @@ export function DataTableDemo() {
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -278,5 +329,5 @@ export function DataTableDemo() {
         </div>
       </div>
     </div>
-  )
+  );
 }

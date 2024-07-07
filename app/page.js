@@ -4,17 +4,25 @@ import { DataTableDemo } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [Inputt, setInput] = useState("");
   const { toast } = useToast();
   const [ShortenUrl, setShortenUrl] = useState("");
   const [OldUrl, setOldUrl] = useState("");
+  const [Uid, setUid] = useState("");
 
   const updateInput = (e) => {
     setInput(e.target.value);
   };
+
+  useEffect(() => {
+    if(!localStorage.getItem('shortenedUrls')){
+      const dummyArray = [];
+      localStorage.setItem('shortenedUrls', JSON.stringify(dummyArray));
+    }
+  }, [])
 
   const shortURL = async () => {
     if (!Inputt.length) {
@@ -31,17 +39,23 @@ export default function Home() {
     });
     const data = await response.json();
     const url = data.shortenedUrl;
+    const u = data.uid;
     const oldUrl = data.url;
     setShortenUrl(url);
     setOldUrl(oldUrl);
 
+    console.log(data)
 
-    const analytics = async() => {
-      const data = {
-        uid: Inputt
-      }
-    }
+    const dta = {
+      uid: Inputt,
+      shortUrl: url,
+      uid: u,
+    };
 
+    const shortenedUrlsArray = localStorage.getItem('shortenedUrls');
+    const shortenedUrls = JSON.parse(shortenedUrlsArray);
+    shortenedUrls.push(dta);
+    localStorage.setItem('shortenedUrls', JSON.stringify(shortenedUrls));
   };
 
   return (
@@ -68,7 +82,7 @@ export default function Home() {
       <p>{OldUrl}</p>
 
       <div className=" w-[80%]">
-        <DataTableDemo />
+        <DataTableDemo  />
       </div>
     </section>
   );
