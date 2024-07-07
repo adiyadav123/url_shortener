@@ -41,6 +41,9 @@ import {
 } from "@/components/ui/table";
 import { FollowPointer, FollowerPointerCard } from "./ui/following-pointer";
 import { LinkPreview } from "./ui/link-preview";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "./ui/use-toast";
 
 // var data = [
 //   {
@@ -164,7 +167,7 @@ export const columns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(payment.uid)}
             >
               Copy UID
             </DropdownMenuItem>
@@ -172,9 +175,12 @@ export const columns = [
             <DropdownMenuItem>View Analytics</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                navigator.clipboard.writeText(
-                  `${process.env.NEXT_PUBLIC_URL}/${payment.id}`
-                );
+                navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/u/${payment.uid}`)
+
+                toast({
+                  title: "Copied",
+                  description: "Short URL copied to clipboard",
+                })
               }}
             >
               Visit
@@ -192,6 +198,7 @@ export function DataTableDemo() {
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [data, setData] = React.useState([]);
+
 
   React.useEffect(() => {
     const getShortenedUrls = async () => {
