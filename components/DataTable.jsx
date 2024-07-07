@@ -115,9 +115,8 @@ export const columns = [
           target="_blank"
           rel="noopener noreferrer"
         >
-          <LinkPreview url="https://github.com/adiyadav123" className="font-bold" >
+          
             {row.getValue("shortUrl")}
-          </LinkPreview>
         </a>
       </div>
     ),

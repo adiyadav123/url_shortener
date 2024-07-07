@@ -4,7 +4,6 @@ import { DataTableDemo } from "@/components/DataTable";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LinkPreview } from "@/components/ui/link-preview";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 
@@ -63,9 +62,6 @@ export default function Home() {
 
   return (
     <section className=" flex items-center justify-center min-h-screen max-w-screen flex-col bg-neutral-950 relative antialiased z-10">
-      <h1 className="relative lg:text-[30px] md:text-[30px] mt-10 font-bold ">
-        Url Shortener
-      </h1>
       <div className=" relative h-[10px]"></div>
       <div className=" flex items-center justify-center w-full h-[60vh] p-5 relative">
         <Input
@@ -85,19 +81,11 @@ export default function Home() {
         <h1 className="text-[20px] font-bold text-center">Shortened URL</h1>
         <div className="h-[10px]"></div>
         <div className="text-[#9572b3]">
-          {IsChecked ? (
-            <LinkPreview url={ShortenUrl}>{ShortenUrl}</LinkPreview>
-          ) : (
-            ShortenUrl
-          )}
+          {ShortenUrl}
         </div>
         <div className="h-[10px]"></div>
         <div className="text-[#9572b3]">
-        {IsChecked ? (
-            <LinkPreview url={OldUrl}>{OldUrl}</LinkPreview>
-          ) : (
-            OldUrl
-          )}
+        {ShortenUrl}
         </div>
       </div>
 
@@ -106,6 +94,9 @@ export default function Home() {
       </div>
 
       <BackgroundBeams />
+
+      
+
     </section>
   );
 }
