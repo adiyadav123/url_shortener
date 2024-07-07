@@ -5,6 +5,7 @@ import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -93,10 +94,11 @@ export default function Home() {
         <DataTableDemo />
       </div>
 
+      <footer className="w-full h-[8vh] flex items-center justify-center fixed left-0 bottom-0 bg-[#34333534] z-30 backdrop-blur-3xl">
+        <h1>Made with ❤️ by <Link href="https://github.com/adiyadav123" target="_blank" >Aditya Yadav</Link></h1>
+      </footer>
+
       <BackgroundBeams />
-
-      
-
     </section>
   );
 }
