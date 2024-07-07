@@ -22,7 +22,14 @@ export default function Home() {
 
   useEffect(() => {
     if (!localStorage.getItem("shortenedUrls")) {
-      const dummyArray = [];
+      const dummyArray = [
+        {
+          clicks: 0,
+          createdAt: 1720355260257,
+          uid: "acde1c",
+          url: "https://console.firebase.google.com/u/0/",
+        },
+      ];
       localStorage.setItem("shortenedUrls", JSON.stringify(dummyArray));
     }
   }, []);
@@ -81,13 +88,9 @@ export default function Home() {
       <div className="z-10 text-center">
         <h1 className="text-[20px] font-bold text-center">Shortened URL</h1>
         <div className="h-[10px]"></div>
-        <div className="text-[#9572b3]">
-          {ShortenUrl}
-        </div>
+        <div className="text-[#9572b3]">{ShortenUrl}</div>
         <div className="h-[10px]"></div>
-        <div className="text-[#9572b3]">
-        {ShortenUrl}
-        </div>
+        <div className="text-[#9572b3]">{ShortenUrl}</div>
       </div>
 
       <div className=" w-[80%] z-10">
@@ -95,7 +98,12 @@ export default function Home() {
       </div>
 
       <footer className="w-full h-[8vh] flex items-center justify-center fixed left-0 bottom-0 bg-[#34333534] z-30 backdrop-blur-3xl">
-        <h1>Made with ❤️ by <Link href="https://github.com/adiyadav123" target="_blank" >Aditya Yadav</Link></h1>
+        <h1>
+          Made with ❤️ by{" "}
+          <Link href="https://github.com/adiyadav123" target="_blank">
+            Aditya Yadav
+          </Link>
+        </h1>
       </footer>
 
       <BackgroundBeams />

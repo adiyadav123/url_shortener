@@ -203,10 +203,6 @@ export function DataTableDemo() {
         }
       } 
 
-      if (!shortenedUrl) {
-        return;
-      }
-
       const parsedData = JSON.parse(shortenedUrl);
       const result = await Promise.all(
         parsedData.map(async (item) => {
