@@ -4,6 +4,7 @@ import { DataTableDemo } from "@/components/DataTable";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LinkPreview } from "@/components/ui/link-preview";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 
@@ -80,9 +81,17 @@ export default function Home() {
      <div className="z-10 text-center">
         <h1 className="text-[20px] font-bold text-center">Shortened URL</h1>
         <div className="h-[10px]"></div>
-        <div className="text-[#9572b3]">{ShortenUrl}</div>
+        <div className="text-[#9572b3]">
+          <LinkPreview url={ShortenUrl} >
+            {ShortenUrl}
+          </LinkPreview>
+        </div>
         <div className="h-[10px]"></div>
-        <div className="text-[#9572b3]">{OldUrl}</div>
+        <div className="text-[#9572b3]">
+          <LinkPreview url={OldUrl}>
+            {OldUrl}
+          </LinkPreview>
+        </div>
      </div>
 
 
