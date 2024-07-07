@@ -4,7 +4,7 @@ import { child, get, getDatabase, ref } from "firebase/database";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
 
   const router = useRouter();
 
@@ -63,4 +63,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default Page;
