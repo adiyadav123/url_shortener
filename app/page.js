@@ -28,7 +28,7 @@ export default function Home() {
           clicks: 0,
           createdAt: 1720355260257,
           uid: "acde1c",
-          url: "https://console.firebase.google.com/u/0/",
+          url: "https://youtube.com/shorts/xD664dQWpDk?si=lP4Wr8SJ1GoVLZuZ",
         },
       ];
       localStorage.setItem("shortenedUrls", JSON.stringify(dummyArray));
