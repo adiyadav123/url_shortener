@@ -34,6 +34,7 @@ export default function Home() {
         },
       ];
       localStorage.setItem("shortenedUrls", JSON.stringify(dummyArray));
+      location.reload();
     }
   }, []);
 

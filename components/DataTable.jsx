@@ -220,16 +220,24 @@ export function DataTableDemo() {
   React.useEffect(() => {
     const getShortenedUrls = () => {
       const shortenedUrl = localStorage.getItem("shortenedUrls");
-  
-      if (shortenedUrl) {
-        if (shortenedUrl.length < 0) {
-          return;
-        }
+
+      if (!shortenedUrl) {
+        const dummyArray = [
+          {
+            clicks: 0,
+            createdAt: 1720355260257,
+            uid: "acde1c",
+            url: "https://youtube.com/shorts/xD664dQWpDk?si=lP4Wr8SJ1GoVLZuZ",
+            shortUrl: "https://ushort-gray.vercel.app/u/acde1c",
+          },
+        ];
+        localStorage.setItem("shortenedUrls", JSON.stringify(dummyArray));
       }
-  
+
       const parsedData = JSON.parse(shortenedUrl);
+
       const data = [];
-  
+
       parsedData.forEach((item) => {
         onValue(child(dbRef, `urls/${item.uid}`), (snapshot) => {
           if (snapshot.exists()) {
@@ -246,7 +254,7 @@ export function DataTableDemo() {
           }
         });
       });
-  
+
       const uniqueData = data.filter(
         (item, index, self) =>
           index ===
@@ -254,14 +262,14 @@ export function DataTableDemo() {
             (t) => t.uid === item.uid && t.shortUrl === item.shortUrl
           )
       );
-  
+
       setData(uniqueData);
     };
-  
+
     getShortenedUrls(); // Call the function once on mount
-  
+
     const intervalId = setInterval(getShortenedUrls, 3000); // Then call it every 3 seconds
-  
+
     return () => {
       clearInterval(intervalId); // Clear the interval when the component unmounts
     };
