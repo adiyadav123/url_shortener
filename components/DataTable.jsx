@@ -44,6 +44,8 @@ import { LinkPreview } from "./ui/link-preview";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "./ui/use-toast";
+import { initializeApp } from "firebase/app";
+import { child, get, getDatabase, onValue, ref } from "firebase/database";
 
 // var data = [
 //   {
@@ -118,8 +120,7 @@ export const columns = [
           target="_blank"
           rel="noopener noreferrer"
         >
-          
-            {row.getValue("shortUrl")}
+          {row.getValue("shortUrl")}
         </a>
       </div>
     ),
@@ -172,15 +173,16 @@ export const columns = [
               Copy UID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View Analytics</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_URL}/u/${payment.uid}`)
+                navigator.clipboard.writeText(
+                  `${process.env.NEXT_PUBLIC_URL}/u/${payment.uid}`
+                );
 
                 toast({
                   title: "Copied",
                   description: "Short URL copied to clipboard",
-                })
+                });
               }}
             >
               Visit
@@ -199,41 +201,52 @@ export function DataTableDemo() {
   const [rowSelection, setRowSelection] = React.useState({});
   const [data, setData] = React.useState([]);
 
+  const firebaseConfig = {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+    databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase();
+
+  const dbRef = ref(getDatabase());
 
   React.useEffect(() => {
-    const getShortenedUrls = async () => {
+    const getShortenedUrls = () => {
       const shortenedUrl = localStorage.getItem("shortenedUrls");
-
+  
       if (shortenedUrl) {
         if (shortenedUrl.length < 0) {
           return;
         }
-      } 
-
+      }
+  
       const parsedData = JSON.parse(shortenedUrl);
-      const result = await Promise.all(
-        parsedData.map(async (item) => {
-          const response = await fetch(`/api/redirect`, {
-            method: "POST",
-            "Content-Type": "application/json",
-            body: JSON.stringify({ uid: item.uid, clicks: 0 }),
-          });
-          const redirect_data = await response.json();
-
-          return {
-            uid: item.uid,
-            shortUrl: item.shortUrl,
-            clicks: redirect_data.clicks,
-            createdAt: redirect_data.createdAt,
-            status: "Active",
-          };
-        })
-      );
-
-      result.map((item) => {
-        data.push(item);
+      const data = [];
+  
+      parsedData.forEach((item) => {
+        onValue(child(dbRef, `urls/${item.uid}`), (snapshot) => {
+          if (snapshot.exists()) {
+            const response = snapshot.val();
+            data.push({
+              uid: item.uid,
+              shortUrl: item.shortUrl,
+              clicks: response ? response.clicks : 0,
+              createdAt: response ? response.createdAt : 0,
+              status: "Active",
+            });
+          } else {
+            console.log("No data available");
+          }
+        });
       });
-
+  
       const uniqueData = data.filter(
         (item, index, self) =>
           index ===
@@ -241,11 +254,17 @@ export function DataTableDemo() {
             (t) => t.uid === item.uid && t.shortUrl === item.shortUrl
           )
       );
-
+  
       setData(uniqueData);
     };
-
-    getShortenedUrls();
+  
+    getShortenedUrls(); // Call the function once on mount
+  
+    const intervalId = setInterval(getShortenedUrls, 3000); // Then call it every 3 seconds
+  
+    return () => {
+      clearInterval(intervalId); // Clear the interval when the component unmounts
+    };
   }, []);
 
   const table = useReactTable({
@@ -269,116 +288,117 @@ export function DataTableDemo() {
 
   return (
     <div className="w-full">
-        <div className="flex items-center py-4">
-          <Input
-            placeholder="Filter uids..."
-            value={table.getColumn("uid")?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn("uid")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter uids..."
+          value={table.getColumn("uid")?.getFilterValue() ?? ""}
+          onChange={(event) =>
+            table.getColumn("uid")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
                   return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   );
                 })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
         </div>
+      </div>
+      <div className="h-[100px]"></div>
     </div>
   );
 }

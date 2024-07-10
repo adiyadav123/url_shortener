@@ -1,4 +1,5 @@
 import { getUrlData, updateClicks } from "@/firebaseSetup";
+import { middleware as rateLimitMiddleware } from "@/middleware";
 import { child, get, getDatabase, ref } from "firebase/database";
 import { NextResponse } from "next/server";
 
