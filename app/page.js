@@ -124,7 +124,7 @@ export default function Home() {
       <footer className="w-full h-[8vh] flex items-center justify-center fixed left-0 bottom-0 bg-[#34333534] z-30 backdrop-blur-3xl">
         <h1>
           Made with ❤️ by{" "}
-          <LinkPreview url="https://github.com/adiyadav123">Aditya</LinkPreview>
+          <LinkPreview url="https://github.com/adiyadav123" className=" underline">Aditya</LinkPreview>
         </h1>
       </footer>
 
