@@ -238,32 +238,34 @@ export function DataTableDemo() {
 
       const data = [];
 
-      parsedData.forEach((item) => {
-        onValue(child(dbRef, `urls/${item.uid}`), (snapshot) => {
-          if (snapshot.exists()) {
-            const response = snapshot.val();
-            data.push({
-              uid: item.uid,
-              shortUrl: item.shortUrl,
-              clicks: response ? response.clicks : 0,
-              createdAt: response ? response.createdAt : 0,
-              status: "Active",
-            });
-          } else {
-            console.log("No data available");
-          }
+      setTimeout(() => {
+        parsedData.forEach((item) => {
+          onValue(child(dbRef, `urls/${item.uid}`), (snapshot) => {
+            if (snapshot.exists()) {
+              const response = snapshot.val();
+              data.push({
+                uid: item.uid,
+                shortUrl: item.shortUrl,
+                clicks: response ? response.clicks : 0,
+                createdAt: response ? response.createdAt : 0,
+                status: "Active",
+              });
+            } else {
+              console.log("No data available");
+            }
+          });
         });
-      });
 
-      const uniqueData = data.filter(
-        (item, index, self) =>
-          index ===
-          self.findIndex(
-            (t) => t.uid === item.uid && t.shortUrl === item.shortUrl
-          )
-      );
+        const uniqueData = data.filter(
+          (item, index, self) =>
+            index ===
+            self.findIndex(
+              (t) => t.uid === item.uid && t.shortUrl === item.shortUrl
+            )
+        );
 
-      setData(uniqueData);
+        setData(uniqueData);
+      }, 2000);
     };
 
     getShortenedUrls(); // Call the function once on mount
