@@ -107,11 +107,11 @@ export default function Home() {
         ) : (
           <>
             <div className="text-[#9572b3]">
-              {ShortenUrl}
+              <Link href={ShortenUrl} target="_blank">{ShortenUrl}</Link>
             </div>
             <div className="h-[10px]"></div>
             <div className="text-[#9572b3]">
-              <LinkPreview url={OldUrl}>{OldUrl}</LinkPreview>
+              <Link href={OldUrl} target="_blank">{OldUrl}</Link>
             </div>
           </>
         )}

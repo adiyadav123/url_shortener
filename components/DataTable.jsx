@@ -40,7 +40,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FollowPointer, FollowerPointerCard } from "./ui/following-pointer";
-import { LinkPreview } from "./ui/link-preview";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "./ui/use-toast";
